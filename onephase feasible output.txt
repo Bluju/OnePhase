@@ -1,0 +1,18 @@
+one phase simplex
+1	1
+2	1	<=	4
+1	2	<=	4
+1	-1	<= 	1
+answer (4/3, 4/3), the value is 8/3
+
+
+
+
+
+
+
+
+
+
+
+
