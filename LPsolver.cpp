@@ -15,11 +15,11 @@ int main()
 {
     int numberOfConstraints{0};
     //read input file 
-    ifstream InputFile("onephase unbounded input.txt");
+    ifstream InputFile("onephase feasable input.txt");
     string input;
     stringstream s(input);
     int value;
-    cout << "This is working" << endl;
+    cout << "Before Input" << endl;
     getline(InputFile,input);
     cout << input << endl;
     
@@ -32,7 +32,7 @@ int main()
         //* size of the vector is the number of variables
         //put vector into array that holds all constraints
     }
-    
+    cout << "After Input is collected" << endl;
     //convert the problem into canonical form
     
     //check if problem can be solved using one-phase simplex method
