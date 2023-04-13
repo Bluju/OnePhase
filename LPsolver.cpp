@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -13,19 +14,25 @@ using namespace std;
 int main()
 {
     int numberOfConstraints{0};
-    //read input file using input redirection for ease of testing
+    //read input file 
+    ifstream InputFile("onephase unbounded input.txt");
     string input;
     stringstream s(input);
-    while(cin.good())
+    int value;
+    cout << "This is working" << endl;
+    getline(InputFile,input);
+    cout << input << endl;
+    
+    
+    while(getline(InputFile,input))
     {
-        getline(cin,input);
-        s << input;
-        s >> value;
+        
         cout << value << endl;
         //create a vector to hold the values
         //* size of the vector is the number of variables
         //put vector into array that holds all constraints
     }
+    
     //convert the problem into canonical form
     
     //check if problem can be solved using one-phase simplex method
@@ -34,6 +41,6 @@ int main()
     
     //convert the problem from canonical form to standard form and add slack variables
     
-    
+    InputFile.close();
     return 0;
 }
