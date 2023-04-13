@@ -15,10 +15,14 @@ int main()
     int numberOfConstraints{0};
     //read input file using input redirection for ease of testing
     string input;
+    stringstream s(input);
     while(cin.good())
     {
         getline(cin,input);
-        //get a line from input, add each value into a vector
+        s << input;
+        s >> value;
+        cout << value << endl;
+        //create a vector to hold the values
         //* size of the vector is the number of variables
         //put vector into array that holds all constraints
     }
