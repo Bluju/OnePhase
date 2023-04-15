@@ -19,19 +19,63 @@ int main()
     string input;
     stringstream s(input);
     int value;
-    cout << "Before Input" << endl;
-    getline(InputFile,input);
-    cout << input << endl;
-    
-    
-    while(getline(InputFile,input))
-    {
-        
-        cout << value << endl;
-        //create a vector to hold the values
-        //* size of the vector is the number of variables
-        //put vector into array that holds all constraints
+    const vector <int> vect; ////stays as an empty vector
+    vector<vector<int>> matrix; //holds the target equation and the constraints
+
+    if(InputFile.is_open()){
+        cout << "Before Input" << endl;
+        //add the target quation to the matrix
+        getline(InputFile,input);
+        cout << input << endl;
+        //convert the input line into int values for the vector
+        matrix.push_back(vect);
+
+        //add the constraints to the matrix
+        int constraints = 1;
+        int value = 0;
+        while(InputFile){
+            InputFile >> input;
+            if(input == ">="){
+                //add the final value to the vector and multiply every value in the vector by -1
+                //then update the index
+
+            }else if(input == "<="){
+                //add the final value to the vector, then update the index
+                InputFile >> input;
+                value = stoi(input);
+                matrix[constraints].push_back(value);
+                constraints++;
+
+            }else{
+                //add empty vector to matrix if previous vector is finished
+                ////will result in extra vector being added at the end, don't know how to fix that
+                ////matrix will be at size one when target equation is added
+                if(constraints == matrix.size()){
+                    matrix.push_back(vect);
+                }
+                //convert input to int and add it to the vector
+                value = stoi(input);
+                matrix[constraints].push_back(value);
+            }
+            cout << input << endl;
+            ////prints out the last value twice, don't know how to fix that, causes the extra vector
+        }
+        cout << "\nMatrix:\n";
+        for(int i = 0; i < matrix.size(); i++){
+            for(int j = 0; j < matrix[i].size(); j++){
+                cout << matrix[i][j] << " ";
+            }
+            cout << endl;
+        }
+        cout << "Done inputing\n";
+    } else{
+        cout << "File not open\n";
     }
+
+    //create a vector to hold the values
+    //* size of the vector is the number of variables
+    //put vector into array that holds all constraints
+
     cout << "After Input is collected" << endl;
     //convert the problem into canonical form
     
