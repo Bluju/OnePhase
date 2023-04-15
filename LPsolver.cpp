@@ -15,20 +15,24 @@ int main()
 {
     int numberOfConstraints{0};
     //read input file 
-    ifstream InputFile("onephase feasable input.txt");
+    ifstream InputFile("onephase feasible input.txt");
     string input;
-    stringstream s(input);
-    int value;
+    int inputAsInt;
     const vector <int> vect; ////stays as an empty vector
     vector<vector<int>> matrix; //holds the target equation and the constraints
 
     if(InputFile.is_open()){
-        cout << "Before Input" << endl;
-        //add the target quation to the matrix
-        getline(InputFile,input);
-        cout << input << endl;
-        //convert the input line into int values for the vector
         matrix.push_back(vect);
+        ////cout << "Before Input" << endl;
+        //add the target equation to the matrix
+        getline(InputFile,input);
+        ////cout << input << endl;
+        //convert the input line into int values for the vector using a stringstream
+        stringstream s(input);
+        while(s >> inputAsInt){
+            //loop until target equation is in matrix
+            matrix[0].push_back(inputAsInt);
+        }
 
         //add the constraints to the matrix
         int constraints = 1;
@@ -57,9 +61,13 @@ int main()
                 value = stoi(input);
                 matrix[constraints].push_back(value);
             }
+
             cout << input << endl;
             ////prints out the last value twice, don't know how to fix that, causes the extra vector
         }
+        ////Temporary(maybe permanent lol) fix to the last value being added as an extra matrix
+        matrix.pop_back(); // gets rid of the extra vector
+
         cout << "\nMatrix:\n";
         for(int i = 0; i < matrix.size(); i++){
             for(int j = 0; j < matrix[i].size(); j++){
