@@ -14,7 +14,7 @@ using namespace std;
 
 int main()
 {
-    
+    //declare functions
     bool isOnePhase(vector<vector<double>>);
     vector<vector<double>> rowOperations(vector<vector<double>>);
     //read input file 
@@ -26,7 +26,6 @@ int main()
 
     if(InputFile.is_open()){
         matrix.push_back(vect);
-        ////cout << "Before Input" << endl;
         //add the target equation to the matrix
         getline(InputFile,input);
         ////cout << input << endl;
@@ -45,6 +44,8 @@ int main()
         while(InputFile){
             InputFile >> input;
             if(input == ">="){
+                
+                
                 //add the final value to the vector and multiply every value in the vector by -1
                 //then update the index
                 
@@ -64,19 +65,18 @@ int main()
                     matrix.push_back(vect);
                 }
                 //convert input to int and add it to the vector
-                value = stoi(input);
+                value = stod(input);
                 matrix[constraints].push_back(value);
             }
 
-            cout << input << endl;
-            ////prints out the last value twice, don't know how to fix that, causes the extra vector
+            
         }
         ////Temporary(maybe permanent lol) fix to the last value being added as an extra matrix
         matrix.pop_back(); // gets rid of the extra vector
 
         //adds slack variables to vectors
         //stores right hand values temporarily
-        vector<int> rhv;
+        vector<double> rhv;
         for(int i = 0; i < matrix.size(); i++){
             rhv.push_back(matrix[i][matrix[i].size()-1]);
         }
@@ -128,13 +128,14 @@ int main()
     }
     
     //* If all right hand sides of the constraints are positive, invoke simplex Algorithm
-    vector<vector<int>> optimizedMatrix;
-    //optimizedMatrix = rowOperations(matrix);
+    vector<vector<double>> optimizedMatrix;
+    optimizedMatrix = rowOperations(matrix);
 
     cout << "Optimized Matrix: \n";
-    for(int i = 0; i < matrix.size(); i++){
-        for(int j = 0; j < matrix[i].size(); j++){
-            cout << matrix[i][j] << " ";
+    
+    for(int i = 0; i < optimizedMatrix.size(); i++){
+        for(int j = 0; j < optimizedMatrix[i].size(); j++){
+            cout << optimizedMatrix[i][j] << " ";
         }
         cout << endl;
     }
@@ -142,12 +143,12 @@ int main()
     //Output optimal solution
     
     //Output Optimal value
-    printf("Optimal value: %d",matrix.at(0).back() - optimizedMatrix.at(0).back());
+    //printf("Optimal value: %d",matrix.at(0).back() - optimizedMatrix.at(0).back());
     InputFile.close();
     return 0;
 }
 
-bool isOnePhase(vector<vector<int>> m){
+bool isOnePhase(vector<vector<double>> m){
     //return true if all the right hand constraints are positive
     for(int i = 1; i < m.size(); ++i){
         if(m.at(i).back() < 0){
@@ -158,8 +159,8 @@ bool isOnePhase(vector<vector<int>> m){
 }
 
 
-vector<vector<int>> rowOperations(vector<vector<int>> m){
-    //returns the optimized
+vector<vector<double>> rowOperations(vector<vector<double>> m){
+    //returns the optimized matrix
 
     //check if target equation is nonpositive
     bool nonpos = true;
@@ -173,7 +174,7 @@ vector<vector<int>> rowOperations(vector<vector<int>> m){
         return m;
     }else{
         //find the largest coefficient in the target equation and mark the index
-        int largestCoefficient = 0;
+        double largestCoefficient = 0;
         int index = 0; // largest coefficient index
         for(int i = 0; i < m[0].size(); i++){
             if (m[0][i] > largestCoefficient){
@@ -183,17 +184,29 @@ vector<vector<int>> rowOperations(vector<vector<int>> m){
         }
         int constraint = 1;
         //find the bottleneck for the first constraint
-        int bottleneck = m[1][m.size()-1]/m[1][index];
+        double bottleneck = m[1][m.size()-1]/m[1][index];
         //find the bottleneck for that variable
+        
         for(int i = 2; i < m.size(); i++){
             if(m[i][m.size()-1]/m[i][index] < bottleneck){
                 constraint = i;
+                bottleneck = m[i][m.size()-1]/m[i][index];
             }
         }
         //set the target varaible to 1
         for(int i = 0; i < m[index].size(); i++){
-            m[i] /= m[index];
+            m[constraint][i] = m[constraint][i] / m[constraint][index];
         }
+
+        //set the other coefficents in row index to 0, and update the row
+        for(int i = 0; i < m.size(); i++){
+            if(i != constraint){
+                for(int j = 0; j < m[i].size(); j++){
+                    m[i][j] - m[constraint][index] * m[constraint][j];
+                }
+            }
+        }
+        return m;
     }
 
     
