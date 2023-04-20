@@ -3,6 +3,7 @@
 #include <sstream>
 #include <vector>
 #include <fstream>
+#include <iterator>
 
 using namespace std;
 
@@ -13,13 +14,15 @@ using namespace std;
 
 int main()
 {
-    int numberOfConstraints{0};
+    
+    bool isOnePhase(vector<vector<double>>);
+    vector<vector<double>> rowOperations(vector<vector<double>>);
     //read input file 
     ifstream InputFile("onephase feasible input.txt");
     string input;
-    int inputAsInt;
-    const vector <int> vect; ////stays as an empty vector
-    vector<vector<int>> matrix; //holds the target equation and the constraints
+    double inputAsDouble;
+    const vector <double> vect; ////stays as an empty vector
+    vector<vector<double>> matrix; //holds the target equation and the constraints
 
     if(InputFile.is_open()){
         matrix.push_back(vect);
@@ -27,26 +30,29 @@ int main()
         //add the target equation to the matrix
         getline(InputFile,input);
         ////cout << input << endl;
-        //convert the input line into int values for the vector using a stringstream
+        //convert the input line into double values for the vector using a stringstream
         stringstream s(input);
-        while(s >> inputAsInt){
+        while(s >> inputAsDouble){
             //loop until target equation is in matrix
-            matrix[0].push_back(inputAsInt);
+            matrix[0].push_back(inputAsDouble);
         }
+        matrix[0].push_back(0);
 
         //add the constraints to the matrix
+
         int constraints = 1;
-        int value = 0;
+        double value = 0;
         while(InputFile){
             InputFile >> input;
             if(input == ">="){
                 //add the final value to the vector and multiply every value in the vector by -1
                 //then update the index
-    //change here
+                
+    
             }else if(input == "<="){
                 //add the final value to the vector, then update the index
                 InputFile >> input;
-                value = stoi(input);
+                value = stod(input);
                 matrix[constraints].push_back(value);
                 constraints++;
 
@@ -68,6 +74,37 @@ int main()
         ////Temporary(maybe permanent lol) fix to the last value being added as an extra matrix
         matrix.pop_back(); // gets rid of the extra vector
 
+        //adds slack variables to vectors
+        //stores right hand values temporarily
+        vector<int> rhv;
+        for(int i = 0; i < matrix.size(); i++){
+            rhv.push_back(matrix[i][matrix[i].size()-1]);
+        }
+
+        //replaces the rhv with the slack variables
+        for(int i = 0; i < rhv.size(); i++){
+            if(i == 1){
+                matrix[i][matrix[i].size()-1] = 1;
+            }else{
+                matrix[i][matrix[i].size()-1] = 0;
+            }
+        }
+        //adds the rest of the slack variables
+        for(int i = 2; i < matrix.size(); i++){
+            for(int j = 0; j < matrix.size(); j++){
+                if(i == j){
+                    matrix[j].push_back(1);
+                }else{
+                    matrix[j].push_back(0);
+                }
+            }
+        }
+
+        //re-adds the rhv
+        for(int i = 0; i < rhv.size(); i++){
+            matrix[i].push_back(rhv[i]);
+        }
+
         cout << "\nMatrix:\n";
         for(int i = 0; i < matrix.size(); i++){
             for(int j = 0; j < matrix[i].size(); j++){
@@ -80,19 +117,84 @@ int main()
         cout << "File not open\n";
     }
 
-    //create a vector to hold the values
-    //* size of the vector is the number of variables
-    //put vector into array that holds all constraints
 
     cout << "After Input is collected" << endl;
-    //convert the problem into canonical form
+    
     
     //check if problem can be solved using one-phase simplex method
+    if(!isOnePhase(matrix)){
+        cout << "Can't be solved in one phase, need Two-Phase Simplex Algorithm\n";
+        return 0;
+    }
+    
     //* If all right hand sides of the constraints are positive, invoke simplex Algorithm
-    //* Otherwise print "can't be solved in one phase, need Two-phase simplex algorithm" then return
+    vector<vector<int>> optimizedMatrix;
+    //optimizedMatrix = rowOperations(matrix);
+
+    cout << "Optimized Matrix: \n";
+    for(int i = 0; i < matrix.size(); i++){
+        for(int j = 0; j < matrix[i].size(); j++){
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
     
-    //convert the problem from canonical form to standard form and add slack variables
+    //Output optimal solution
     
+    //Output Optimal value
+    printf("Optimal value: %d",matrix.at(0).back() - optimizedMatrix.at(0).back());
     InputFile.close();
     return 0;
+}
+
+bool isOnePhase(vector<vector<int>> m){
+    //return true if all the right hand constraints are positive
+    for(int i = 1; i < m.size(); ++i){
+        if(m.at(i).back() < 0){
+            return false;
+        }
+    }
+    return true;
+}
+
+
+vector<vector<int>> rowOperations(vector<vector<int>> m){
+    //returns the optimized
+
+    //check if target equation is nonpositive
+    bool nonpos = true;
+    for(int i = 0; i < m[0].size(); i++){
+        if(m[0][i] > 0){
+            nonpos = false;
+        }
+    }
+    //do row operations or return the matrix
+    if(nonpos){
+        return m;
+    }else{
+        //find the largest coefficient in the target equation and mark the index
+        int largestCoefficient = 0;
+        int index = 0; // largest coefficient index
+        for(int i = 0; i < m[0].size(); i++){
+            if (m[0][i] > largestCoefficient){
+                largestCoefficient = m[0][i];
+                index = i;
+            }
+        }
+        int constraint = 1;
+        //find the bottleneck for the first constraint
+        int bottleneck = m[1][m.size()-1]/m[1][index];
+        //find the bottleneck for that variable
+        for(int i = 2; i < m.size(); i++){
+            if(m[i][m.size()-1]/m[i][index] < bottleneck){
+                constraint = i;
+            }
+        }
+        //set the target varaible to 1
+        for(int i = 0; i < m[index].size(); i++){
+            m[i] /= m[index];
+        }
+    }
+
+    
 }
