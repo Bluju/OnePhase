@@ -139,6 +139,22 @@ int main()
         }
         cout << endl;
     }
+
+    ////testing individual row operations
+    for(int k = 0; k < 3; k++){
+    cout << endl;
+    optimizedMatrix = rowOperations(optimizedMatrix);
+
+    cout << "Optimized Matrix: \n";
+    
+    for(int i = 0; i < optimizedMatrix.size(); i++){
+        for(int j = 0; j < optimizedMatrix[i].size(); j++){
+            cout << optimizedMatrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+    }
+    ////
     
     //Output optimal solution
     
@@ -184,30 +200,45 @@ vector<vector<double>> rowOperations(vector<vector<double>> m){
         }
         int constraint = 1;
         //find the bottleneck for the first constraint
-        double bottleneck = m[1][m.size()-1]/m[1][index];
-        //find the bottleneck for that variable
         
+        double bottleneck = m[1][m[1].size()-1]/m[1][index];
+        
+        //find the bottleneck for that variable
         for(int i = 2; i < m.size(); i++){
-            if(m[i][m.size()-1]/m[i][index] < bottleneck){
+            if(m[i][m[1].size()-1]/m[i][index] < bottleneck){
                 constraint = i;
-                bottleneck = m[i][m.size()-1]/m[i][index];
+                bottleneck = m[i][m[1].size()-1]/m[i][index];
             }
         }
-        //set the target varaible to 1
-        for(int i = 0; i < m[index].size(); i++){
-            m[constraint][i] = m[constraint][i] / m[constraint][index];
-        }
+        //assign the row operation value,
+        //need to assign this because it will get updated in the matrix, but we need the nonupdated value
 
+        //divide the target row by the target variabel, setting the target varaible to 1
+        double targetValue = m[constraint][index];
+        for(int i = 0; i < m[index].size(); i++){
+            m[constraint][i] = m[constraint][i] / targetValue;
+        }
+        
         //set the other coefficents in row index to 0, and update the row
         for(int i = 0; i < m.size(); i++){
             if(i != constraint){
+            //assign the row operation value,
+            //also gets updated during the operations
+            double rowValue = m[i][index];
+            
                 for(int j = 0; j < m[i].size(); j++){
-                    m[i][j] - m[constraint][index] * m[constraint][j];
+                    //cout << m[i][j] << " - " << m[constraint][j] << " * " << rowValue << " / " << m[constraint][index] << endl;
+                    if(m[constraint][index] != 0){
+                    m[i][j] = m[i][j] - m[constraint][j] * rowValue / m[constraint][index];
+                    }
                 }
             }
         }
+        //m = rowOperations(m);
         return m;
+        
     }
+    
 
     
 }
