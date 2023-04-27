@@ -48,7 +48,13 @@ int main()
                 
                 //add the final value to the vector and multiply every value in the vector by -1
                 //then update the index
-                
+                InputFile >> input;
+                value = stod(input);
+                matrix[constraints].push_back(value);
+                for(int i = 0; i < matrix[constraints].size(); i++){
+                    matrix[constraints][i] *= -1;
+                }
+                constraints++;
     
             }else if(input == "<="){
                 //add the final value to the vector, then update the index
@@ -172,6 +178,13 @@ bool isOnePhase(vector<vector<double>> m){
         }
     }
     return true;
+}
+
+vector<vector<double>> basicFeasableSolution(vector<vector<double>> m){
+    //given a matrix, find and return the basic feasable solution
+    vector<double> bfs;
+    
+    return bfs;
 }
 
 
