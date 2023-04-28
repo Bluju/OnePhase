@@ -12,3 +12,5 @@ Write a program to implement the one phase simplex algorithm in C++.
   c. Otherwise print out a message: "Can't be solved in one phase, need Two-Phase Simplex Algorithm", then return.
   
 Submit the source code, test input files, test output text file or screen shot. 
+
+* Note: Compiled correctly while using g++ (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0 on VScode and g++ (GCC) 10.3.0 on Replit
